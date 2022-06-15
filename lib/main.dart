@@ -1,8 +1,7 @@
 import 'dart:io';
 
-import 'package:flutter/material.dart';
-
 import 'package:android_window/android_window.dart';
+import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 
 @pragma('vm:entry-point')
@@ -15,7 +14,7 @@ void main() async {
   if (Platform.isMacOS || Platform.isWindows) {
     await windowManager.ensureInitialized();
     WindowOptions windowOptions = const WindowOptions(
-      size: Size(600, 800),
+      size: Size(300, 400),
       center: true,
       titleBarStyle: TitleBarStyle.hidden,
       skipTaskbar: true,
@@ -41,50 +40,55 @@ class VotingMachine extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Voting Machine',
-      home: AndroidWindow(
-        child: Material(
-          color: Colors.white,
-          clipBehavior: Clip.antiAliasWithSaveLayer,
-          borderRadius: const BorderRadius.all(Radius.circular(8)),
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
+      home: Platform.isAndroid
+          ? AndroidWindow(
+              child: buildConnect(),
+            )
+          : buildConnect(),
+      debugShowCheckedModeBanner: false,
+    );
+  }
+
+  Widget buildConnect() {
+    return Material(
+      color: Colors.white,
+      clipBehavior: Clip.antiAliasWithSaveLayer,
+      borderRadius: const BorderRadius.all(Radius.circular(8)),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      '投票器',
-                      style: TextStyle(fontSize: 16, color: Colors.black),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        if (Platform.isAndroid) {
-                          AndroidWindow.close();
-                        }
-                        exit(0);
-                      },
-                      child:
-                          const Icon(Icons.close, size: 20, color: Colors.grey),
-                    ),
-                  ],
+                const Text(
+                  '投票器',
+                  style: TextStyle(fontSize: 16, color: Colors.black),
                 ),
-                const Spacer(),
-                ElevatedButton(
-                  onPressed: () {
-                    debugPrint('>>>>');
+                GestureDetector(
+                  onTap: () {
+                    if (Platform.isAndroid) {
+                      AndroidWindow.close();
+                    }
+                    exit(0);
                   },
-                  child: const Text(
-                    '投票',
-                    style: TextStyle(fontSize: 16, color: Colors.white),
-                  ),
+                  child: const Icon(Icons.close, size: 20, color: Colors.grey),
                 ),
               ],
             ),
-          ),
+            const Spacer(),
+            ElevatedButton(
+              onPressed: () {
+                debugPrint('>>>>');
+              },
+              child: const Text(
+                '投票',
+                style: TextStyle(fontSize: 16, color: Colors.white),
+              ),
+            ),
+          ],
         ),
       ),
-      debugShowCheckedModeBanner: false,
     );
   }
 }

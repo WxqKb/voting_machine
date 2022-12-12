@@ -35,10 +35,14 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
 
-  android_window:
-    git:
-      url: 'https://github.com/WxqKb/flutter-android-window.git'
+#  android_window:
+#    git:
+#      url: 'https://github.com/WxqKb/flutter-android-window.git'
   window_manager: ^0.2.5
+  flutter_multi_windows:
+    git:
+      url: git@gitlab.gz.cvte.cn:cvte_flutter/fluttermultiwindows.git
+      ref: weixiaoqiang-methodChannel
 
 dev_dependencies:
   flutter_test:

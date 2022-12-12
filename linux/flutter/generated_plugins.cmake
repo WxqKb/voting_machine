@@ -3,6 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  flutter_multi_windows
   screen_retriever
   window_manager
 )

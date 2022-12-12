@@ -1,12 +1,17 @@
 import 'dart:io';
 
-import 'package:android_window/android_window.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_multi_windows/flutter_multi_windows.dart';
 import 'package:window_manager/window_manager.dart';
 
 @pragma('vm:entry-point')
-void androidWindow() {
-  runApp(const VotingMachine());
+void androidWindow(List<String> args) {
+  print('==== Flutter的入口函数:${DateTime.now().millisecondsSinceEpoch}');
+  runApp(
+    VotingMachine(
+      windowId: args[0],
+    ),
+  );
 }
 
 void main() async {
@@ -26,16 +31,13 @@ void main() async {
       await windowManager.setAlwaysOnTop(true);
       await windowManager.setAsFrameless();
     });
-    runApp(
-      Platform.isWindows
-          ? const DragToMoveArea(child: VotingMachine())
-          : const VotingMachine(),
-    );
+    runApp(const VotingMachine());
   }
 }
 
 class VotingMachine extends StatefulWidget {
-  const VotingMachine({Key? key}) : super(key: key);
+  const VotingMachine({Key? key, this.windowId}) : super(key: key);
+  final String? windowId;
 
   @override
   State<VotingMachine> createState() => _VotingMachineState();
@@ -49,6 +51,7 @@ class _VotingMachineState extends State<VotingMachine>
   @override
   void initState() {
     super.initState();
+    print('==== 页面初始化:${DateTime.now().millisecondsSinceEpoch}');
     controller = TabController(length: tabs.length, vsync: this);
   }
 
@@ -56,11 +59,7 @@ class _VotingMachineState extends State<VotingMachine>
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Voting Machine',
-      home: Platform.isAndroid
-          ? AndroidWindow(
-              child: buildConnect(),
-            )
-          : buildConnect(),
+      home: buildConnect(),
       debugShowCheckedModeBanner: false,
     );
   }
@@ -88,9 +87,11 @@ class _VotingMachineState extends State<VotingMachine>
                     child: GestureDetector(
                       onTap: () {
                         if (Platform.isAndroid) {
-                          AndroidWindow.close();
+                          FlutterMultiWindows f = FlutterMultiWindows();
+                          f.close(widget.windowId!);
+                        } else {
+                          exit(0);
                         }
-                        exit(0);
                       },
                       child:
                           const Icon(Icons.close, size: 22, color: Colors.grey),
